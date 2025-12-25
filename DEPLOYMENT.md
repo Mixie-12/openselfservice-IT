@@ -282,10 +282,12 @@ cd openselfservice-IT
 # Install all npm packages (this may take several minutes)
 npm ci
 
-# The postinstall script will automatically install Playwright dependencies
-# If needed, manually install Playwright:
-npx playwright install --with-deps chromium
+# The postinstall script will automatically install Playwright browsers
+# If you need to manually install system dependencies for Playwright (requires sudo):
+sudo npx playwright install-deps chromium
 ```
+
+**Note**: The `npm ci` command will automatically install Playwright browsers via the postinstall script. System dependencies for Playwright are only needed if you plan to run browser tests locally, and require sudo privileges. For most deployments, this is not necessary as tests run in CI/CD.
 
 ### Configure Environment Variables
 

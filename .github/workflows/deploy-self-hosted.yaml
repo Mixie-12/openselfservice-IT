@@ -61,6 +61,17 @@ jobs:
                   node-version: '22'
                   cache: 'npm'
 
+            - name: Install Playwright system dependencies
+              run: |
+                  # Install Playwright system dependencies if not already installed
+                  # This requires sudo but should be a one-time setup on the runner
+                  if command -v sudo &> /dev/null; then
+                      sudo npx playwright install-deps chromium || echo "Failed to install system deps (may already be installed or lack permissions)"
+                  else
+                      echo "sudo not available, skipping system dependencies installation"
+                  fi
+              continue-on-error: true
+
             - name: Install dependencies
               run: npm ci
               env:

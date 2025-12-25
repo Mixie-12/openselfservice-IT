@@ -198,7 +198,18 @@ VERCEL_DOCS_PROJECT_ID=<project-id>
    sudo ./svc.sh start
    ```
 
-4. **Verify Runner**:
+4. **Install Playwright System Dependencies** (one-time setup):
+   ```bash
+   # This requires sudo and only needs to be done once on the runner
+   # It installs system libraries needed for browser automation
+   npx playwright install-deps chromium
+   ```
+   
+   **Note**: The workflows will attempt to install these automatically, but if the runner 
+   user doesn't have sudo access, you'll need to run this command manually with a user 
+   that has sudo privileges. This is a one-time setup per runner.
+
+5. **Verify Runner**:
    - Go to **Settings → Actions → Runners**
    - Runner should show as "Idle" or "Active"
 
@@ -328,6 +339,26 @@ npm run build
 ```bash
 node --version  # Should be 22+
 ```
+
+### Playwright Installation Issues
+
+If you see errors like "user is not in the sudoers file" during npm install:
+
+**Solution 1**: Install system dependencies with sudo (one-time setup):
+```bash
+# Run this once on the runner with a user that has sudo access
+sudo npx playwright install-deps chromium
+```
+
+**Solution 2**: Skip system dependencies (they're already installed):
+- The postinstall script now only installs browser binaries (no sudo required)
+- System dependencies are attempted in the workflow but will gracefully fail if sudo is not available
+- If tests fail due to missing libraries, manually install system dependencies using Solution 1
+
+**What Changed**:
+- The `postinstall` script in package.json no longer uses `--with-deps` flag
+- Workflows have a separate step to install system dependencies that gracefully fails
+- Browser binaries are still automatically installed without needing sudo
 
 ## Best Practices
 
