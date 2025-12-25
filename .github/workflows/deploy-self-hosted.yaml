@@ -23,7 +23,7 @@ on:
 
 jobs:
     pre_job:
-        runs-on: ubuntu-latest
+        runs-on: [self-hosted, linux]
         outputs:
             should_skip: ${{ steps.skip_check.outputs.should_skip }}
         steps:
@@ -88,7 +88,7 @@ jobs:
                   NEXT_PUBLIC_API_URL=http://${SERVER_IP}:3001/api
                   NEXT_PUBLIC_API_URL_INTERNAL=http://api-harmonization:3001/api
                   
-                  AUTH_SECRET=${{ secrets.AUTH_SECRET || 'yYaVHF3L70TfHqcfyR6kIE6pXHAydlN2r+o36+Vrmyc=' }}
+                  AUTH_SECRET=${{ secrets.AUTH_SECRET || '__CHANGE_ME_IN_PRODUCTION__' }}
                   AUTH_TRUST_HOST=true
                   
                   AUTH_GOOGLE_ID=${{ secrets.AUTH_GOOGLE_ID || '' }}
@@ -164,7 +164,7 @@ jobs:
 
             - name: Run tests
               run: npm run test
-              continue-on-error: true
+              continue-on-error: false
 
             - name: Deploy with Docker Compose
               if: ${{ github.event.inputs.deployment_mode == 'docker' || github.event.inputs.deployment_mode == '' }}
@@ -233,9 +233,8 @@ jobs:
                   echo "  Frontend: http://${{ steps.get-ip.outputs.ip }}:3000"
                   echo "  API: http://${{ steps.get-ip.outputs.ip }}:3001/api"
                   echo ""
-                  echo "Default login credentials:"
-                  echo "  Username: jane@example.com"
-                  echo "  Password: admin"
+                  echo "⚠️  IMPORTANT: Change default credentials after first login!"
+                  echo "See deployment documentation for security best practices."
                   echo ""
                   if [ "${{ github.event.inputs.deployment_mode }}" == "nodejs" ]; then
                       echo "Deployment mode: Node.js (PM2)"
@@ -265,10 +264,11 @@ jobs:
                   echo "- **Frontend**: http://${{ steps.get-ip.outputs.ip }}:3000" >> $GITHUB_STEP_SUMMARY
                   echo "- **API**: http://${{ steps.get-ip.outputs.ip }}:3001/api" >> $GITHUB_STEP_SUMMARY
                   echo "" >> $GITHUB_STEP_SUMMARY
-                  echo "## 🔐 Default Credentials" >> $GITHUB_STEP_SUMMARY
+                  echo "## ⚠️ Security Notice" >> $GITHUB_STEP_SUMMARY
                   echo "" >> $GITHUB_STEP_SUMMARY
-                  echo "- **Username**: jane@example.com" >> $GITHUB_STEP_SUMMARY
-                  echo "- **Password**: admin" >> $GITHUB_STEP_SUMMARY
+                  echo "- Change default credentials after first login" >> $GITHUB_STEP_SUMMARY
+                  echo "- Set \`AUTH_SECRET\` in repository secrets for production" >> $GITHUB_STEP_SUMMARY
+                  echo "- Review [DEPLOYMENT.md](../../DEPLOYMENT.md) for security best practices" >> $GITHUB_STEP_SUMMARY
 
     cleanup-old-deployments:
         runs-on: [self-hosted, linux]

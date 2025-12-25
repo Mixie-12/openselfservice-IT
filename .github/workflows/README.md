@@ -346,7 +346,6 @@ node --version  # Should be 22+
 
 - [Deployment Guide](../../DEPLOYMENT.md)
 - [Quick Start Guide](../../QUICK_START.md)
-- [GitHub Runner Documentation](../apps/docs/docs/guides/deployment/github-runner.md)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 - [Self-Hosted Runners Guide](https://docs.github.com/en/actions/hosting-your-own-runners)
 
