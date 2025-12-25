@@ -10,16 +10,16 @@ import tailwindPlugin from './plugins/tailwind-config';
 let hideDocs = false;
 
 const config: Config = {
-    title: 'Open Self Service',
+    title: 'Sysnordic',
     tagline:
-        ' is an open-source framework that lets you easily integrate APIs, unify data, and build scalable, high-performance customer support portals with Next.js, TypeScript, and NestJS.',
+        ' - Oslo-based SOC as a Service. 24/7 overvåking, hendelseshåndtering, digital etterforskning og styringsstøtte for virksomheter som må møte krav fra NSM, NIS2, ISO/IEC 27001.',
     favicon: '/img/favicons/favicon.ico',
     customFields: {
-        brandName: 'Open Self Service',
-        heading: 'Open Self Service',
-        heading2: 'The Open-Source Composable Frontend for Customer Support',
-        fullPageTitle: 'Build Composable Customer Portals with Ease',
-        description: 'An open source development kit for building composable Customer Portals.',
+        brandName: 'Sysnordic',
+        heading: 'Sysnordic',
+        heading2: 'Oslo-basert SOC as a Service',
+        fullPageTitle: 'Sikkerhetsoperasjoner som tjeneste — med compliance i bunn',
+        description: '24/7 overvåking, hendelseshåndtering, digital etterforskning og styringsstøtte.',
     },
     headTags: [
         // SEO
@@ -231,7 +231,7 @@ const config: Config = {
         },
     ],
     // Set the production url of your site here
-    url: 'https://www.openselfservice.com',
+    url: 'https://www.sysnordic.no',
     // Set the /<baseUrl>/ pathname under which your site is served
     // For GitHub pages deployment, it is often '/<projectName>/'
     baseUrl: '/',

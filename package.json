@@ -1,5 +1,5 @@
 {
-    "name": "o2s",
+    "name": "sysnordic",
     "private": true,
     "scripts": {
         "postinstall": "npx playwright install --with-deps chromium",
