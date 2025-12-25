@@ -2,7 +2,7 @@
     "name": "sysnordic",
     "private": true,
     "scripts": {
-        "postinstall": "npx playwright install --with-deps chromium",
+        "postinstall": "npx playwright install chromium",
         "prepare": "husky",
         "dev": "turbo watch dev",
         "predev": "turbo build -F=!{./apps/*} -F=!{./packages/cli/*}",
