@@ -66,6 +66,14 @@ jobs:
               env:
                   CI: true
 
+            - name: Validate AUTH_SECRET
+              run: |
+                  if [ "${{ secrets.AUTH_SECRET }}" == "" ]; then
+                      echo "⚠️  WARNING: AUTH_SECRET is not set in repository secrets."
+                      echo "A placeholder will be used. This is NOT secure for production!"
+                      echo "Set AUTH_SECRET in repository settings: Settings → Secrets and variables → Actions"
+                  fi
+
             - name: Create default environment files
               run: |
                   SERVER_IP="${{ steps.get-ip.outputs.ip }}"
@@ -217,11 +225,19 @@ jobs:
                   
                   # Check frontend
                   echo "Testing frontend..."
-                  curl -f http://localhost:3000 || echo "Frontend health check failed"
+                  if ! curl -f http://localhost:3000; then
+                      echo "❌ Frontend health check failed"
+                      exit 1
+                  fi
+                  echo "✅ Frontend is healthy"
                   
                   # Check API
                   echo "Testing API..."
-                  curl -f http://localhost:3001/api || echo "API health check failed"
+                  if ! curl -f http://localhost:3001/api; then
+                      echo "❌ API health check failed"
+                      exit 1
+                  fi
+                  echo "✅ API is healthy"
 
             - name: Display deployment info
               run: |
