@@ -54,7 +54,7 @@ export default async function RootLayout({ children, params }: Props) {
                     <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
                     <link rel="shortcut icon" href="/favicon/favicon.ico" />
                     <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
-                    <meta name="apple-mobile-web-app-title" content="Open Self Service" />
+                    <meta name="apple-mobile-web-app-title" content="Sysnordic" />
                 </head>
                 {/*@see https://github.com/nextauthjs/next-auth/issues/9504#issuecomment-2516665386*/}
                 <SessionProvider key={session?.user?.id} session={session} refetchOnWindowFocus={false}>

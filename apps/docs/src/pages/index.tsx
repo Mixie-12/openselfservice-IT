@@ -2,24 +2,12 @@ import type { ReactNode } from 'react';
 
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 
-import GithubIcon from '@site/src/assets/icons/github.svg';
-import Cerrad from '@site/src/assets/logos/Cerrad.svg';
-import DeutscheTelekom from '@site/src/assets/logos/DeutscheTelekom.svg';
-import DormerPramet from '@site/src/assets/logos/DormerPramet.svg';
-import Fortum from '@site/src/assets/logos/Fortum.svg';
-import Orange from '@site/src/assets/logos/Orange.svg';
-import OrangeEnergia from '@site/src/assets/logos/OrangeEnergia.svg';
-import Osadkowski from '@site/src/assets/logos/Osadkowski.svg';
-import { ClientsSection } from '@site/src/components/ClientsSection';
 import { HeroBannerSection } from '@site/src/components/HeroBannerSection';
-import { HomepageAboutSection } from '@site/src/components/HomepageAboutSection';
 import { HomepageArchitectureSection } from '@site/src/components/HomepageArchitectureSection';
-import { HomepageBenefitsSection } from '@site/src/components/HomepageBenefitsSection';
 import { HomepageFeaturesSection } from '@site/src/components/HomepageFeaturesSection';
 import { HomepageStartersSection } from '@site/src/components/HomepageStartersSection';
-import { HomepageUseCases } from '@site/src/components/HomepageUseCases';
 import { SubscribeSection } from '@site/src/components/SubscribeSection';
-import { Body, BodyBold } from '@site/src/components/Typography';
+import { Body } from '@site/src/components/Typography';
 
 import Layout from '@theme/Layout';
 
@@ -41,62 +29,116 @@ export default function Home(): ReactNode {
                                     heading={
                                         <>
                                             <br />
-                                            Frontend stack for
-                                            <span className="text-highlighted"> customer self-service</span>{' '}
-                                            experiences.
+                                            Oslo-basert
+                                            <span className="text-highlighted"> SOC as a Service</span>
+                                            <br />
+                                            24/7 overvåking • deteksjon • respons
                                             <br />
                                         </>
                                     }
                                     description={
                                         <Body>
-                                            <b>Open Self Service</b> is a composable frontend layer for customer
-                                            portals, support apps, and digital self-service platforms. It can be powered
-                                            by your own backend APIs or our growing set of ready-made integrations.
+                                            <b>Sysnordic</b> leverer kontinuerlig overvåking, hendelseshåndtering, 
+                                            digital etterforskning og styringsstøtte for virksomheter som må møte 
+                                            krav fra NSM, NIS2, ISO/IEC 27001 og andre rammeverk.
                                         </Body>
                                     }
-                                    cliCommand="npx create-o2s-app"
+                                    cliCommand="sysnordic://security-ops"
                                     mainLink={{
-                                        text: 'Explore features',
-                                        url: '/product/features',
+                                        text: 'Se tjenester',
+                                        url: '/tjenester',
                                     }}
                                     secondaryLink={{
-                                        text: 'See on GitHub',
-                                        url: 'https://github.com/o2sdev/openselfservice',
-                                        iconLeft: <GithubIcon />,
+                                        text: 'Kontakt oss',
+                                        url: '/contact',
                                     }}
                                     heroImage={{
                                         url: '/img/homepage/banner.png',
-                                        alt: 'Laptop with connecting nodes illustration',
+                                        alt: 'Security Operations Center illustration',
                                     }}
                                 />
 
                                 <div className="flex flex-col gap-y-40 pb-16">
                                     <section className="px-4 scroll-m-[120px]">
-                                        <ClientsSection
-                                            lead={
-                                                <Body>
-                                                    We’ve spent over a decade designing, building, and operating
-                                                    self-service portals and digital platforms across industries. Our
-                                                    experience spans telecom, energy, manufacturing, and financial
-                                                    services — with solutions used by millions of end users.
-                                                </Body>
-                                            }
-                                            clients={[
-                                                { name: 'Orange Energia', img: <OrangeEnergia /> },
-                                                { name: 'Osadkowski', img: <Osadkowski /> },
-                                                { name: 'Fortum', img: <Fortum /> },
-                                                { name: 'Dormer Pramet', img: <DormerPramet /> },
-                                                { name: 'Cerrad', img: <Cerrad /> },
-                                                { name: 'Deutsche Telekom', img: <DeutscheTelekom /> },
-                                                { name: 'Orange', img: <Orange /> },
-                                            ]}
-                                        />
+                                        <div className="max-w-4xl mx-auto text-center">
+                                            <h2 className="text-3xl font-bold mb-6">Våre tjenester</h2>
+                                            <Body>
+                                                Fra «hacker-vibe» til enterprise — uten å miste presisjon. 
+                                                Vi kombinerer moderne sikkerhetsmetodikk med tydelig dokumentasjon 
+                                                og forankring i lov- og rammeverkskrav.
+                                            </Body>
+                                        </div>
                                     </section>
 
-                                    <HomepageStartersSection />
-                                    <HomepageFeaturesSection />
-                                    <HomepageArchitectureSection />
-                                    {/* <HomepageUseCases /> */}
+                                    <section className="px-4">
+                                        <div className="max-w-6xl mx-auto">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                                <div className="p-6 rounded-lg border">
+                                                    <h3 className="text-xl font-bold mb-4">🛰️ Overvåking & deteksjon</h3>
+                                                    <Body>
+                                                        24/7 • triage • hunting. Kontinuerlig overvåking med tydelig prioritering. 
+                                                        Vi skiller signal fra støy og gir konkrete anbefalinger.
+                                                    </Body>
+                                                </div>
+                                                <div className="p-6 rounded-lg border">
+                                                    <h3 className="text-xl font-bold mb-4">🧯 Hendelseshåndtering</h3>
+                                                    <Body>
+                                                        IR • beredskap • runbooks. Fra første varsling til gjenoppretting: 
+                                                        avgrensning, eradikering, læring og forbedring av beredskap.
+                                                    </Body>
+                                                </div>
+                                                <div className="p-6 rounded-lg border">
+                                                    <h3 className="text-xl font-bold mb-4">🔎 Digital forensics</h3>
+                                                    <Body>
+                                                        Beviskjede • analyse • rapport. Strukturert innsamling og analyse 
+                                                        med fokus på sporbarhet og dokumentasjon.
+                                                    </Body>
+                                                </div>
+                                                <div className="p-6 rounded-lg border">
+                                                    <h3 className="text-xl font-bold mb-4">📜 Compliance & styring</h3>
+                                                    <Body>
+                                                        NSM • NIS2 • ISO 27001. Vi kobler sikkerhetstiltak til krav og kontrollmål, 
+                                                        og leverer sporbar dokumentasjon som støtter revisjon.
+                                                    </Body>
+                                                </div>
+                                                <div className="p-6 rounded-lg border">
+                                                    <h3 className="text-xl font-bold mb-4">🧩 Integrasjon & forbedring</h3>
+                                                    <Body>
+                                                        SIEM • SOAR • EDR • sky. Vi møter dere der dere er: verktøy, logger 
+                                                        og prosesser — og bygger stegvis modenhet uten å bremse drift.
+                                                    </Body>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+
+                                    <section className="px-4">
+                                        <div className="max-w-4xl mx-auto">
+                                            <h2 className="text-3xl font-bold mb-6 text-center">Hvordan leveransen fungerer</h2>
+                                            <Body className="text-center mb-8">
+                                                Standardisert, men tilpasset: vi etablerer grunnmur, kobler på datakilder, 
+                                                og setter opp playbooks. Deretter jobber vi kontinuerlig med forbedring og rapportering.
+                                            </Body>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <div className="p-6">
+                                                    <h4 className="text-lg font-bold mb-2">01 — Onboarding</h4>
+                                                    <Body>Tilgang, logging, datakilder, avklarte roller og eskaleringsløp.</Body>
+                                                </div>
+                                                <div className="p-6">
+                                                    <h4 className="text-lg font-bold mb-2">02 — Deteksjon & respons</h4>
+                                                    <Body>Regler, triage, IR-runbooks og hendelseshåndtering.</Body>
+                                                </div>
+                                                <div className="p-6">
+                                                    <h4 className="text-lg font-bold mb-2">03 — Compliance & rapportering</h4>
+                                                    <Body>Kontroller, evidens, KPI-er, revisjonsklar dokumentasjon.</Body>
+                                                </div>
+                                                <div className="p-6">
+                                                    <h4 className="text-lg font-bold mb-2">04 — Kontinuerlig forbedring</h4>
+                                                    <Body>Threat hunting, læring etter hendelser, hardening og modenhet.</Body>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
                                 </div>
                             </main>
                         </div>
@@ -104,12 +146,20 @@ export default function Home(): ReactNode {
 
                     <div className="section-gradient-1 py-40 mb-0!">
                         <section className="mb-0! px-4 max-w-[1080px] mx-auto">
-                            <SubscribeSection portalId="143969481" formId="ad91735e-018c-4a60-a749-18f11d57b0e4" />
+                            <div className="text-center">
+                                <h2 className="text-3xl font-bold mb-6">Klar for en moden SOC-leveranse?</h2>
+                                <Body>
+                                    Vi starter gjerne med en kort avklaring (30 min) og skisserer anbefalt leveranse, 
+                                    datakilder og forventet effekt.
+                                </Body>
+                                <div className="mt-8">
+                                    <a href="mailto:kontakt@sysnordic.no" className="text-xl font-bold">
+                                        kontakt@sysnordic.no
+                                    </a>
+                                </div>
+                            </div>
                         </section>
                     </div>
-
-                    {/* <HomepageAboutSection /> */}
-                    {/* <HomepageBenefitsSection /> */}
                 </div>
             </Layout>
         </div>

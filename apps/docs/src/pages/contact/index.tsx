@@ -12,8 +12,8 @@ const Contact = () => {
 
     return (
         <Layout
-            title="Contact us"
-            description="Fill in the form if you want to contact with the Open Self Service team"
+            title="Kontakt oss - Sysnordic"
+            description="Ta kontakt med Sysnordic for SOC as a Service, Incident Response, og compliance-tjenester"
         >
             <div className="linearGradient static">
                 <div className={styles.contactContainer}>
@@ -25,45 +25,45 @@ const Contact = () => {
                                 <div className="grid md:grid-cols-2 gap-14 md:gap-28 mt-14">
                                     <div>
                                         <h1 className={styles['font-extrabold']}>
-                                            Get <span className={styles['text-highlighted']}>in touch</span>
+                                            Ta <span className={styles['text-highlighted']}>kontakt</span>
                                         </h1>
                                         <p>
-                                            Want to build a tailored customer support platform?
-                                            <br /> Need expert technical guidance or have questions about extended Open
-                                            Self Service features and offer?
+                                            Trenger du hjelp med SOC, Incident Response, eller compliance?
+                                            <br /> Vil du diskutere hvordan vi kan støtte deres 
+                                            sikkerhetsbehov og møte krav fra NSM, NIS2, eller ISO 27001?
                                         </p>
-                                        <p>Please send all your enquiries using the form.</p>
+                                        <p>Send oss en henvendelse via skjemaet, eller kontakt oss direkte:</p>
                                         <p>
-                                            You can also reach us at{' '}
-                                            <a href="mailto:contact@openselfservice.com">contact@openselfservice.com</a>
+                                            E-post:{' '}
+                                            <a href="mailto:kontakt@sysnordic.no">kontakt@sysnordic.no</a>
                                         </p>
                                     </div>
                                     <HubspotForm
                                         portalId={portalId}
                                         formId={formId}
-                                        title="Contact us"
+                                        title="Kontakt oss"
                                         description={
-                                            <>Fill out the form below and we'll get back to you as soon as possible.</>
+                                            <>Fyll ut skjemaet under, så tar vi kontakt så snart som mulig.</>
                                         }
-                                        pageName="Contact - Open Self Service"
+                                        pageName="Kontakt - Sysnordic"
                                         fields={[
                                             {
                                                 __typename: 'text',
-                                                label: 'Email',
+                                                label: 'E-post',
                                                 type: 'email',
                                                 required: true,
                                                 name: 'email',
                                             },
                                             {
                                                 __typename: 'text',
-                                                label: 'First Name',
+                                                label: 'Fornavn',
                                                 type: 'text',
                                                 name: 'firstname',
                                             },
-                                            { __typename: 'text', label: 'Last Name', type: 'text', name: 'lastname' },
+                                            { __typename: 'text', label: 'Etternavn', type: 'text', name: 'lastname' },
                                             {
                                                 __typename: 'textarea',
-                                                label: 'Message',
+                                                label: 'Melding',
                                                 required: true,
                                                 name: 'message',
                                                 rows: 2,
@@ -75,17 +75,8 @@ const Contact = () => {
                                                 required: true,
                                                 label: (
                                                     <>
-                                                        I consent to the processing of my personal data by Hycom&nbsp;SA
-                                                        as described in the{' '}
-                                                        <a
-                                                            href="/docs/openselfservice_EN_Information_obligation.pdf"
-                                                            target="_blank"
-                                                            className={styles.contactFormText}
-                                                        >
-                                                            information clause
-                                                        </a>{' '}
-                                                        to respond to inquiries and provide information about products
-                                                        and services.
+                                                        Jeg samtykker til at Sysnordic behandler mine personopplysninger 
+                                                        for å svare på henvendelser og gi informasjon om produkter og tjenester.
                                                     </>
                                                 ),
                                             },
