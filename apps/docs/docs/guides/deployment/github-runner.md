@@ -24,9 +24,9 @@ This deployment method combines:
 
 ## Quick Start
 
-For experienced users, see the [Quick Start Guide](/QUICK_START.md) in the repository root.
+For experienced users, see the [Quick Start Guide](https://github.com/Mixie-12/openselfservice-IT/blob/main/QUICK_START.md) in the repository root.
 
-For detailed step-by-step instructions, see the [Complete Deployment Guide](/DEPLOYMENT.md).
+For detailed step-by-step instructions, see the [Complete Deployment Guide](https://github.com/Mixie-12/openselfservice-IT/blob/main/DEPLOYMENT.md).
 
 ## Deployment Steps
 
@@ -364,8 +364,8 @@ sudo lsof -i :3001
 
 ## Additional Resources
 
-- [Complete Deployment Guide](/DEPLOYMENT.md) - Detailed instructions
-- [Quick Start Guide](/QUICK_START.md) - Fast reference
+- [Complete Deployment Guide](https://github.com/Mixie-12/openselfservice-IT/blob/main/DEPLOYMENT.md) - Detailed instructions
+- [Quick Start Guide](https://github.com/Mixie-12/openselfservice-IT/blob/main/QUICK_START.md) - Fast reference
 - [Docker Deployment](./docker.md) - Docker-specific details
 - [Vercel Deployment](./vercel.md) - Vercel alternative
 
