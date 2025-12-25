@@ -52,6 +52,38 @@ For mer informasjon om våre tjenester:
 
 Sysnordic er en Oslo-basert sikkerhetspartner med fokus på leveranse. Vi bygger moderne sikkerhetsoperasjoner og compliance-programmer for norske virksomheter.
 
+## 🚢 Deployment
+
+This project can be deployed in multiple ways:
+
+- **[Quick Start Guide](QUICK_START.md)** - Fast deployment reference
+- **[Complete Deployment Guide](DEPLOYMENT.md)** - Detailed step-by-step instructions
+- **Docker Compose** - See [docker-compose.yml](docker-compose.yml) or [deployment docs](apps/docs/docs/guides/deployment/docker.md)
+- **GitHub Self-Hosted Runner** - See [GitHub Runner Guide](apps/docs/docs/guides/deployment/github-runner.md)
+- **Vercel** - See [Vercel deployment guide](apps/docs/docs/guides/deployment/vercel.md)
+
+### Quick Deploy with Docker
+
+```bash
+# Install prerequisites: Docker, Docker Compose, Node.js 22+
+
+# Clone repository
+git clone https://github.com/Mixie-12/openselfservice-IT.git
+cd openselfservice-IT
+
+# Create Docker network
+docker network create app_network
+
+# Deploy
+docker compose up -d --build
+
+# Access:
+# Frontend: http://localhost:3000
+# API: http://localhost:3001/api
+```
+
+For detailed instructions, see [DEPLOYMENT.md](DEPLOYMENT.md).
+
 ## Contact e-mail
 [kontakt@sysnordic.no](mailto:kontakt@sysnordic.no)
 
