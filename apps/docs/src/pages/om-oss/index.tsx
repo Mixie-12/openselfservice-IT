@@ -1,13 +1,10 @@
 import type { ReactNode } from 'react';
 
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-
 import { Body, H2, H3 } from '@site/src/components/Typography';
 
 import Layout from '@theme/Layout';
 
 export default function OmOss(): ReactNode {
-    const { siteConfig } = useDocusaurusContext();
 
     return (
         <Layout title="Om oss - Sysnordic" description="Oslo-basert sikkerhetspartner med fokus på leveranse">

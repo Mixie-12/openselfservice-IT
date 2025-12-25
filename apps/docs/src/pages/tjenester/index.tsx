@@ -1,13 +1,10 @@
 import type { ReactNode } from 'react';
 
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-
 import { Body, H2, H3 } from '@site/src/components/Typography';
 
 import Layout from '@theme/Layout';
 
 export default function Tjenester(): ReactNode {
-    const { siteConfig } = useDocusaurusContext();
 
     return (
         <Layout title="Tjenester - Sysnordic" description="Alt du trenger for drift, respons og dokumentert sikkerhet">
