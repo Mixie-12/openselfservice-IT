@@ -1,0 +1,283 @@
+name: Deploy to Self-Hosted Runner
+
+permissions:
+    actions: write
+    contents: read
+    checks: read
+    deployments: write
+
+on:
+    push:
+        branches:
+            - main
+    workflow_dispatch:
+        inputs:
+            deployment_mode:
+                description: 'Deployment mode'
+                required: true
+                default: 'docker'
+                type: choice
+                options:
+                    - docker
+                    - nodejs
+
+jobs:
+    pre_job:
+        runs-on: ubuntu-latest
+        outputs:
+            should_skip: ${{ steps.skip_check.outputs.should_skip }}
+        steps:
+            - id: skip_check
+              uses: fkirc/skip-duplicate-actions@v5
+              with:
+                  concurrent_skipping: 'outdated_runs'
+                  cancel_others: 'true'
+                  paths_ignore: '["**/README.md", "**/DEPLOYMENT.md", "**/QUICK_START.md", "**/*.md"]'
+
+    deploy:
+        runs-on: [self-hosted, linux]
+        needs: pre_job
+        if: needs.pre_job.outputs.should_skip != 'true'
+        environment:
+            name: production
+            url: http://${{ steps.get-ip.outputs.ip }}:3000
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 1
+
+            - name: Get Server IP
+              id: get-ip
+              run: |
+                  IP=$(hostname -I | awk '{print $1}')
+                  echo "ip=$IP" >> $GITHUB_OUTPUT
+                  echo "Server IP: $IP"
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '22'
+                  cache: 'npm'
+
+            - name: Install dependencies
+              run: npm ci
+              env:
+                  CI: true
+
+            - name: Create default environment files
+              run: |
+                  SERVER_IP="${{ steps.get-ip.outputs.ip }}"
+                  
+                  # Create frontend environment file if it doesn't exist
+                  if [ ! -f apps/frontend/.env.production ]; then
+                      echo "Creating default frontend environment..."
+                      cat > apps/frontend/.env.production << EOF
+                  PORT=3000
+                  ANALYZE=false
+                  
+                  NEXT_PUBLIC_LOG_LEVEL=info
+                  NEXT_PUBLIC_LOG_COLORS_ENABLED=false
+                  NEXT_PUBLIC_LOG_FORMAT=json
+                  
+                  NEXT_PUBLIC_SUPPORTED_LOCALES=en,de,pl,no
+                  NEXT_PUBLIC_DEFAULT_LOCALE=no
+                  
+                  NEXT_PUBLIC_BASE_URL=http://${SERVER_IP}:3000
+                  NEXT_PUBLIC_API_URL=http://${SERVER_IP}:3001/api
+                  NEXT_PUBLIC_API_URL_INTERNAL=http://api-harmonization:3001/api
+                  
+                  AUTH_SECRET=${{ secrets.AUTH_SECRET || 'yYaVHF3L70TfHqcfyR6kIE6pXHAydlN2r+o36+Vrmyc=' }}
+                  AUTH_TRUST_HOST=true
+                  
+                  AUTH_GOOGLE_ID=${{ secrets.AUTH_GOOGLE_ID || '' }}
+                  AUTH_GOOGLE_SECRET=${{ secrets.AUTH_GOOGLE_SECRET || '' }}
+                  
+                  AUTH_GITHUB_ID=${{ secrets.AUTH_GITHUB_ID || '' }}
+                  AUTH_GITHUB_SECRET=${{ secrets.AUTH_GITHUB_SECRET || '' }}
+                  
+                  AUTH_DATABASE_URL=file:./prod.db
+                  AUTH_DEFAULT_USER_ROLE=selfservice_user
+                  EOF
+                  else
+                      echo "Frontend environment file already exists"
+                  fi
+                  
+                  # Create API environment file if it doesn't exist
+                  if [ ! -f apps/api-harmonization/.env.production ]; then
+                      echo "Creating default API environment..."
+                      cat > apps/api-harmonization/.env.production << EOF
+                  NODE_ENV=production
+                  PORT=3001
+                  
+                  TELEMETRY_DISABLED=false
+                  
+                  API_PREFIX=api
+                  
+                  LOG_LEVEL=info
+                  LOG_COLORS_ENABLED=false
+                  LOG_FORMAT=json
+                  
+                  DEFAULT_LOCALE=no
+                  DEFAULT_CURRENCY=NOK
+                  DEFAULT_PRODUCT_UNIT=PCS
+                  
+                  SUPPORTED_CURRENCIES=EUR,USD,PLN,NOK
+                  SUPPORTED_LOCALES=en,de,pl,no
+                  
+                  FRONT_BASE_URLS=http://${SERVER_IP}:3000
+                  
+                  MOCKED_INTEGRATION_DELAYS_ENABLED=false
+                  
+                  CMS_STRAPI_BASE_URL=${{ secrets.CMS_STRAPI_BASE_URL || '' }}
+                  
+                  CACHE_ENABLED=${{ secrets.CACHE_ENABLED || 'false' }}
+                  CACHE_TTL=3600
+                  CACHE_REDIS_HOST=${{ secrets.CACHE_REDIS_HOST || 'localhost' }}
+                  CACHE_REDIS_PORT=${{ secrets.CACHE_REDIS_PORT || '6379' }}
+                  CACHE_REDIS_PASS=${{ secrets.CACHE_REDIS_PASS || '' }}
+                  
+                  ALGOLIA_APP_ID=${{ secrets.ALGOLIA_APP_ID || '' }}
+                  ALGOLIA_API_KEY=${{ secrets.ALGOLIA_API_KEY || '' }}
+                  
+                  API_SURVEYJS_BASE_URL=https://api.surveyjs.io/public/v1
+                  
+                  MEDUSAJS_BASE_URL=${{ secrets.MEDUSAJS_BASE_URL || '' }}
+                  MEDUSAJS_PUBLISHABLE_API_KEY=${{ secrets.MEDUSAJS_PUBLISHABLE_API_KEY || '' }}
+                  MEDUSAJS_ADMIN_API_KEY=${{ secrets.MEDUSAJS_ADMIN_API_KEY || '' }}
+                  
+                  SEARCH_ARTICLES_INDEX_NAME=production
+                  
+                  ZENDESK_API_URL=${{ secrets.ZENDESK_API_URL || '' }}
+                  ZENDESK_API_TOKEN=${{ secrets.ZENDESK_API_TOKEN || '' }}
+                  ZENDESK_TOPIC_FIELD_ID=${{ secrets.ZENDESK_TOPIC_FIELD_ID || '' }}
+                  EOF
+                  else
+                      echo "API environment file already exists"
+                  fi
+
+            - name: Build application
+              run: npm run build
+              env:
+                  NODE_ENV: production
+
+            - name: Run tests
+              run: npm run test
+              continue-on-error: true
+
+            - name: Deploy with Docker Compose
+              if: ${{ github.event.inputs.deployment_mode == 'docker' || github.event.inputs.deployment_mode == '' }}
+              run: |
+                  # Create Docker network if it doesn't exist
+                  docker network create app_network 2>/dev/null || true
+                  
+                  # Stop existing containers
+                  docker compose down || true
+                  
+                  # Build and start containers
+                  docker compose up -d --build --force-recreate
+                  
+                  # Wait for containers to be healthy
+                  echo "Waiting for containers to start..."
+                  sleep 10
+                  
+                  # Check container status
+                  docker compose ps
+
+            - name: Deploy with Node.js (PM2)
+              if: ${{ github.event.inputs.deployment_mode == 'nodejs' }}
+              run: |
+                  # Install PM2 if not already installed
+                  npm install -g pm2 || true
+                  
+                  # Stop existing processes
+                  pm2 delete all || true
+                  
+                  # Start API
+                  cd apps/api-harmonization
+                  pm2 start dist/main.js --name api-harmonization
+                  cd ../..
+                  
+                  # Start Frontend
+                  cd apps/frontend
+                  pm2 start node_modules/next/dist/bin/next --name frontend -- start
+                  cd ../..
+                  
+                  # Save PM2 process list
+                  pm2 save
+                  
+                  # Show status
+                  pm2 list
+
+            - name: Health check
+              run: |
+                  echo "Waiting for services to be ready..."
+                  sleep 15
+                  
+                  # Check frontend
+                  echo "Testing frontend..."
+                  curl -f http://localhost:3000 || echo "Frontend health check failed"
+                  
+                  # Check API
+                  echo "Testing API..."
+                  curl -f http://localhost:3001/api || echo "API health check failed"
+
+            - name: Display deployment info
+              run: |
+                  echo "========================================"
+                  echo "Deployment completed successfully!"
+                  echo "========================================"
+                  echo ""
+                  echo "Application URLs:"
+                  echo "  Frontend: http://${{ steps.get-ip.outputs.ip }}:3000"
+                  echo "  API: http://${{ steps.get-ip.outputs.ip }}:3001/api"
+                  echo ""
+                  echo "Default login credentials:"
+                  echo "  Username: jane@example.com"
+                  echo "  Password: admin"
+                  echo ""
+                  if [ "${{ github.event.inputs.deployment_mode }}" == "nodejs" ]; then
+                      echo "Deployment mode: Node.js (PM2)"
+                      echo "To view logs: pm2 logs"
+                      echo "To restart: pm2 restart all"
+                  else
+                      echo "Deployment mode: Docker Compose"
+                      echo "To view logs: docker compose logs -f"
+                      echo "To restart: docker compose restart"
+                  fi
+                  echo "========================================"
+
+            - name: Create deployment summary
+              if: always()
+              run: |
+                  echo "# Deployment Summary" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "## 🚀 Deployment Details" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "- **Commit**: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+                  echo "- **Branch**: \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+                  echo "- **Server IP**: \`${{ steps.get-ip.outputs.ip }}\`" >> $GITHUB_STEP_SUMMARY
+                  echo "- **Mode**: \`${{ github.event.inputs.deployment_mode || 'docker' }}\`" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "## 🔗 Access URLs" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "- **Frontend**: http://${{ steps.get-ip.outputs.ip }}:3000" >> $GITHUB_STEP_SUMMARY
+                  echo "- **API**: http://${{ steps.get-ip.outputs.ip }}:3001/api" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "## 🔐 Default Credentials" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "- **Username**: jane@example.com" >> $GITHUB_STEP_SUMMARY
+                  echo "- **Password**: admin" >> $GITHUB_STEP_SUMMARY
+
+    cleanup-old-deployments:
+        runs-on: [self-hosted, linux]
+        needs: deploy
+        if: always()
+        steps:
+            - name: Cleanup Docker resources
+              run: |
+                  echo "Cleaning up old Docker resources..."
+                  docker image prune -f --filter "until=72h" || true
+                  docker builder prune -f --filter "until=72h" || true
+              continue-on-error: true

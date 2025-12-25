@@ -173,14 +173,86 @@ Default credentials:
 
 ## GitHub Actions Integration
 
-Your self-hosted runner will automatically execute GitHub Actions workflows. Workflows can:
+Your self-hosted runner will automatically execute GitHub Actions workflows. The repository includes two main workflows:
 
-- Run tests on pull requests
-- Build and deploy on merge to main
-- Execute scheduled tasks
-- Run custom automation
+### CI Workflow (Pull Requests)
 
-Example workflow targeting self-hosted runner:
+**File**: `.github/workflows/ci-self-hosted.yaml`
+
+Runs automatically on pull requests to:
+- Install dependencies
+- Run linting and formatting checks
+- Build the application
+- Execute tests
+- Provide test summaries
+
+### Deployment Workflow (Main Branch)
+
+**File**: `.github/workflows/deploy-self-hosted.yaml`
+
+Runs automatically on push to `main` branch to:
+- Build the application
+- Create default environment variables if not provided
+- Deploy using Docker Compose or Node.js (PM2)
+- Run health checks
+- Generate deployment summaries
+
+#### Automatic Environment Configuration
+
+The deployment workflow automatically creates production environment files with sensible defaults if they don't exist:
+
+- **Frontend** (`apps/frontend/.env.production`):
+  - Detects server IP automatically
+  - Uses provided GitHub secrets or defaults
+  - Configures authentication and API URLs
+
+- **API** (`apps/api-harmonization/.env.production`):
+  - Sets production logging configuration
+  - Configures integrations from secrets
+  - Uses Norwegian locale by default
+
+#### Deployment Modes
+
+You can manually trigger deployment with different modes:
+
+1. **Docker Mode** (default):
+```yaml
+docker compose up -d --build
+```
+
+2. **Node.js Mode** (PM2):
+```bash
+# Uses PM2 process manager for Node.js deployment
+pm2 start apps/frontend
+pm2 start apps/api-harmonization
+```
+
+To manually trigger a deployment:
+1. Go to **Actions** → **Deploy to Self-Hosted Runner**
+2. Click **Run workflow**
+3. Select deployment mode (docker or nodejs)
+
+#### Required GitHub Secrets
+
+Configure these secrets in your repository settings for production deployment:
+
+**Authentication**:
+- `AUTH_SECRET` - Authentication secret (generate with `openssl rand -base64 32`)
+- `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET` - Google OAuth (optional)
+- `AUTH_GITHUB_ID`, `AUTH_GITHUB_SECRET` - GitHub OAuth (optional)
+
+**Integrations** (optional):
+- `CMS_STRAPI_BASE_URL` - Strapi CMS URL
+- `ALGOLIA_APP_ID`, `ALGOLIA_API_KEY` - Algolia search
+- `MEDUSAJS_BASE_URL`, `MEDUSAJS_PUBLISHABLE_API_KEY`, `MEDUSAJS_ADMIN_API_KEY` - Medusa e-commerce
+- `CACHE_REDIS_HOST`, `CACHE_REDIS_PORT`, `CACHE_REDIS_PASS` - Redis caching
+- `ZENDESK_API_URL`, `ZENDESK_API_TOKEN`, `ZENDESK_TOPIC_FIELD_ID` - Zendesk integration
+
+If secrets are not provided, the workflow uses sensible defaults suitable for development/testing.
+
+### Example Workflow Usage
+
+Basic example targeting self-hosted runner:
 
 ```yaml
 name: Deploy to Production

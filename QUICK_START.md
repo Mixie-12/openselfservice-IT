@@ -103,6 +103,26 @@ curl http://localhost:3001/api  # API
   - Username: `jane@example.com`
   - Password: `admin`
 
+## CI/CD Pipeline (Automated Deployment)
+
+Once the runner is set up, GitHub Actions automatically handles deployment:
+
+**Automatic Triggers**:
+- Push to `main` → Deploys to production
+- Pull requests → Runs tests and linting
+
+**Manual Deployment**:
+1. Go to **Actions** → **Deploy to Self-Hosted Runner**
+2. Click **Run workflow** → Select mode (docker/nodejs)
+
+**Features**:
+- ✅ Auto-creates environment variables with defaults
+- ✅ Runs health checks
+- ✅ Provides deployment summary with access URLs
+- ✅ Supports Docker and Node.js (PM2) modes
+
+**View Workflows**: `.github/workflows/README.md`
+
 ## Useful Commands
 
 ```bash

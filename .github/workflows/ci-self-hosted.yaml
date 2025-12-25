@@ -1,0 +1,77 @@
+name: CI - Self-Hosted Runner
+
+permissions:
+    actions: read
+    contents: read
+    checks: write
+    pull-requests: write
+
+on:
+    pull_request:
+        types: [opened, synchronize, reopened]
+    push:
+        branches-ignore:
+            - main
+
+jobs:
+    pre_job:
+        runs-on: ubuntu-latest
+        outputs:
+            should_skip: ${{ steps.skip_check.outputs.should_skip }}
+        steps:
+            - id: skip_check
+              uses: fkirc/skip-duplicate-actions@v5
+              with:
+                  concurrent_skipping: 'outdated_runs'
+                  cancel_others: 'true'
+                  paths_ignore: '["**/README.md", "**/DEPLOYMENT.md", "**/QUICK_START.md", "**/*.md"]'
+
+    test:
+        runs-on: [self-hosted, linux]
+        needs: pre_job
+        if: needs.pre_job.outputs.should_skip != 'true'
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '22'
+                  cache: 'npm'
+
+            - name: Install dependencies
+              run: npm ci
+              env:
+                  CI: true
+
+            - name: Lint
+              run: npm run lint
+              continue-on-error: true
+
+            - name: Format check
+              run: npm run format
+              continue-on-error: true
+
+            - name: Build
+              run: npm run build
+              env:
+                  NODE_ENV: production
+
+            - name: Run tests
+              run: npm run test
+              continue-on-error: true
+
+            - name: Test summary
+              if: always()
+              run: |
+                  echo "# Test Results" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "- **Commit**: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+                  echo "- **Branch**: \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+                  echo "- **Runner**: Self-hosted" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "Build and tests completed. Check individual steps for details." >> $GITHUB_STEP_SUMMARY

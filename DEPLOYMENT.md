@@ -526,10 +526,62 @@ Password: admin
 
 ### Verify GitHub Actions
 
-1. Push a commit to trigger workflows
-2. Go to **Actions** tab in GitHub
-3. Verify that workflows run on your self-hosted runner
-4. Check runner logs: `sudo ./svc.sh status` in `~/actions-runner`
+The repository includes automated CI/CD workflows that run on your self-hosted runner:
+
+1. **CI Workflow** (`.github/workflows/ci-self-hosted.yaml`):
+   - Runs on pull requests
+   - Executes linting, formatting, build, and tests
+   - Provides test summaries
+
+2. **Deployment Workflow** (`.github/workflows/deploy-self-hosted.yaml`):
+   - Runs on push to `main` branch
+   - Automatically deploys the application
+   - Creates default environment variables if not provided
+   - Supports both Docker and Node.js (PM2) deployment modes
+   - Includes health checks and deployment summaries
+
+#### Test the CI/CD Pipeline
+
+```bash
+# Push a commit to trigger the deployment workflow
+git add .
+git commit -m "Test deployment"
+git push origin main
+
+# Or manually trigger deployment via GitHub UI:
+# Go to Actions → Deploy to Self-Hosted Runner → Run workflow
+```
+
+#### Check Workflow Execution
+
+1. Go to **Actions** tab in GitHub
+2. Verify that workflows run on your self-hosted runner (labeled with "self-hosted")
+3. Check deployment summary in workflow run details
+4. View deployment logs for debugging
+
+#### Monitor Runner Status
+
+```bash
+# Check runner service status
+cd ~/actions-runner
+sudo ./svc.sh status
+
+# View runner logs
+sudo journalctl -u actions.runner.* -f
+
+# Restart runner if needed
+sudo ./svc.sh restart
+```
+
+#### Manual Deployment Trigger
+
+You can manually trigger deployment with different modes:
+
+1. Go to **Actions** → **Deploy to Self-Hosted Runner**
+2. Click **Run workflow**
+3. Select deployment mode:
+   - `docker` (default) - Deploys with Docker Compose
+   - `nodejs` - Deploys with PM2 process manager
 
 ---
 
