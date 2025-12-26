@@ -64,6 +64,16 @@ const config: StorybookConfig = {
             },
             optimizeDeps: {
                 include: ['@o2s/framework/modules', '@o2s/framework/sdk'],
+                force: false,
+            },
+            server: {
+                fs: {
+                    strict: false,
+                },
+                watch: {
+                    usePolling: false,
+                    interval: 100,
+                },
             },
             resolve: {
                 conditions: ['import', 'module', 'browser', 'default'],
