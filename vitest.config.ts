@@ -8,9 +8,11 @@ const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(file
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
+    cacheDir: 'node_modules/.vite/storybook',
     server: {
         fs: {
             strict: false,
+            allow: ['..'],
         },
         watch: {
             usePolling: false,
@@ -18,6 +20,9 @@ export default defineConfig({
     },
     optimizeDeps: {
         force: false,
+        esbuildOptions: {
+            target: 'esnext',
+        },
     },
     test: {
         projects: [

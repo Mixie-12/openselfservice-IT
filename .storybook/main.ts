@@ -65,10 +65,14 @@ const config: StorybookConfig = {
             optimizeDeps: {
                 include: ['@o2s/framework/modules', '@o2s/framework/sdk'],
                 force: false,
+                esbuildOptions: {
+                    target: 'esnext',
+                },
             },
             server: {
                 fs: {
                     strict: false,
+                    allow: ['..'],
                 },
                 watch: {
                     usePolling: false,
