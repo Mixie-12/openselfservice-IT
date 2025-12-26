@@ -76,7 +76,6 @@ const config: StorybookConfig = {
                 },
                 watch: {
                     usePolling: false,
-                    interval: 100,
                 },
             },
             resolve: {
