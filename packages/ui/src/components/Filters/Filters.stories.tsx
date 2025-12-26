@@ -192,6 +192,49 @@ export const WithPreselectedValues: Story = {
     },
 };
 
+// Wrapper for FiltersSection stories
+const FiltersSectionWrapper = ({
+    filters,
+    initialValues,
+    title = 'Filter Products',
+}: {
+    filters: Models.Filters.Filters<FilterType>;
+    initialValues: FilterValues;
+    title?: string;
+}) => {
+    const [currentFilters, setCurrentFilters] = useState<FilterValues>(initialValues);
+
+    const handleSubmit = (values: Partial<FilterValues>) => {
+        console.log('Filters submitted:', values);
+        setCurrentFilters({
+            ...currentFilters,
+            ...values,
+        });
+    };
+
+    const handleReset = () => {
+        console.log('Filters reset');
+        setCurrentFilters(initialValues);
+    };
+
+    return (
+        <div className="space-y-4">
+            <FiltersSection
+                title={title}
+                initialFilters={initialValues}
+                filters={filters}
+                initialValues={initialValues}
+                onSubmit={handleSubmit}
+                onReset={handleReset}
+            />
+            <div className="p-4 border rounded-md mb-4">
+                <h3 className="text-sm font-semibold mb-2">Current Filters:</h3>
+                <pre className="text-xs bg-gray-100 p-2 rounded">{JSON.stringify(currentFilters, null, 2)}</pre>
+            </div>
+        </div>
+    );
+};
+
 export const WithSection: Story = {
     args: {
         filters: basicFilters,
@@ -204,40 +247,9 @@ export const WithSection: Story = {
         },
         hasLeadingItem: false,
     },
-    render: ({ filters, initialValues }) => {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        const [currentFilters, setCurrentFilters] = useState<typeof initialValues>(initialValues);
-
-        const handleSubmit = (values: Partial<typeof initialValues>) => {
-            console.log('Filters submitted:', values);
-            setCurrentFilters({
-                ...currentFilters,
-                ...values,
-            });
-        };
-
-        const handleReset = () => {
-            console.log('Filters reset');
-            setCurrentFilters(initialValues);
-        };
-
-        return (
-            <div className="space-y-4">
-                <FiltersSection
-                    title="Filter Products"
-                    initialFilters={initialValues}
-                    filters={filters}
-                    initialValues={initialValues}
-                    onSubmit={handleSubmit}
-                    onReset={handleReset}
-                />
-                <div className="p-4 border rounded-md mb-4">
-                    <h3 className="text-sm font-semibold mb-2">Current Filters:</h3>
-                    <pre className="text-xs bg-gray-100 p-2 rounded">{JSON.stringify(currentFilters, null, 2)}</pre>
-                </div>
-            </div>
-        );
-    },
+    render: ({ filters, initialValues }) => (
+        <FiltersSectionWrapper filters={filters} initialValues={initialValues} />
+    ),
 };
 
 export const WithSearch: Story = {
@@ -280,6 +292,53 @@ export const WithSearchLeading: Story = {
     },
 };
 
+// Wrapper for Inline variant stories
+const InlineFiltersWrapper = ({
+    filters,
+    initialValues,
+    hasLeadingItem = false,
+}: {
+    filters: Models.Filters.Filters<FilterType>;
+    initialValues: FilterValues;
+    hasLeadingItem?: boolean;
+}) => {
+    const [currentFilters, setCurrentFilters] = useState<FilterValues>(initialValues);
+
+    const handleSubmit = (values: Partial<FilterValues>) => {
+        console.log('Filters submitted:', values);
+        setCurrentFilters({
+            ...currentFilters,
+            ...values,
+        });
+    };
+
+    const handleReset = () => {
+        console.log('Filters reset');
+        setCurrentFilters(initialValues);
+    };
+
+    return (
+        <div className="space-y-4">
+            <FiltersContextProvider initialFilters={initialValues}>
+                <div className="p-4 border rounded-md mb-4">
+                    <h3 className="text-sm font-semibold mb-2">Current Filters:</h3>
+                    <pre className="text-xs bg-gray-100 p-2 rounded">{JSON.stringify(currentFilters, null, 2)}</pre>
+                </div>
+
+                <Filters
+                    filters={filters}
+                    initialValues={initialValues}
+                    onSubmit={handleSubmit}
+                    onReset={handleReset}
+                    hasLeadingItem={hasLeadingItem}
+                    variant="inline"
+                    labels={{ clickToSelect: 'Select an option' }}
+                />
+            </FiltersContextProvider>
+        </div>
+    );
+};
+
 export const InlineVariant: Story = {
     args: {
         filters: basicFilters,
@@ -292,44 +351,51 @@ export const InlineVariant: Story = {
         },
         hasLeadingItem: false,
     },
-    render: ({ filters, initialValues }) => {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        const [currentFilters, setCurrentFilters] = useState<typeof initialValues>(initialValues);
+    render: ({ filters, initialValues }) => (
+        <InlineFiltersWrapper filters={filters} initialValues={initialValues} />
+    ),
+};
 
-        const handleSubmit = (values: Partial<typeof initialValues>) => {
-            console.log('Filters submitted:', values);
-            setCurrentFilters({
-                ...currentFilters,
-                ...values,
-            });
-        };
+// Wrapper for Inline variant with section stories
+const InlineFiltersSectionWrapper = ({
+    filters,
+    initialValues,
+}: {
+    filters: Models.Filters.Filters<FilterType>;
+    initialValues: FilterValues;
+}) => {
+    const [currentFilters, setCurrentFilters] = useState<FilterValues>(initialValues);
 
-        const handleReset = () => {
-            console.log('Filters reset');
-            setCurrentFilters(initialValues);
-        };
+    const handleSubmit = (values: Partial<FilterValues>) => {
+        console.log('Filters submitted:', values);
+        setCurrentFilters({
+            ...currentFilters,
+            ...values,
+        });
+    };
 
-        return (
-            <div className="space-y-4">
-                <FiltersContextProvider initialFilters={initialValues}>
-                    <div className="p-4 border rounded-md mb-4">
-                        <h3 className="text-sm font-semibold mb-2">Current Filters:</h3>
-                        <pre className="text-xs bg-gray-100 p-2 rounded">{JSON.stringify(currentFilters, null, 2)}</pre>
-                    </div>
+    const handleReset = () => {
+        console.log('Filters reset');
+        setCurrentFilters(initialValues);
+    };
 
-                    <Filters
-                        filters={filters}
-                        initialValues={initialValues}
-                        onSubmit={handleSubmit}
-                        onReset={handleReset}
-                        hasLeadingItem={false}
-                        variant="inline"
-                        labels={{ clickToSelect: 'Select an option' }}
-                    />
-                </FiltersContextProvider>
+    return (
+        <div className="space-y-4">
+            <FiltersSection
+                title="Filter Products (Inline)"
+                initialFilters={initialValues}
+                filters={filters}
+                initialValues={initialValues}
+                onSubmit={handleSubmit}
+                onReset={handleReset}
+                variant="inline"
+            />
+            <div className="p-4 border rounded-md mb-4">
+                <h3 className="text-sm font-semibold mb-2">Current Filters:</h3>
+                <pre className="text-xs bg-gray-100 p-2 rounded">{JSON.stringify(currentFilters, null, 2)}</pre>
             </div>
-        );
-    },
+        </div>
+    );
 };
 
 export const InlineVariantWithSection: Story = {
@@ -344,39 +410,7 @@ export const InlineVariantWithSection: Story = {
         },
         hasLeadingItem: false,
     },
-    render: ({ filters, initialValues }) => {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        const [currentFilters, setCurrentFilters] = useState<typeof initialValues>(initialValues);
-
-        const handleSubmit = (values: Partial<typeof initialValues>) => {
-            console.log('Filters submitted:', values);
-            setCurrentFilters({
-                ...currentFilters,
-                ...values,
-            });
-        };
-
-        const handleReset = () => {
-            console.log('Filters reset');
-            setCurrentFilters(initialValues);
-        };
-
-        return (
-            <div className="space-y-4">
-                <FiltersSection
-                    title="Filter Products (Inline)"
-                    initialFilters={initialValues}
-                    filters={filters}
-                    initialValues={initialValues}
-                    onSubmit={handleSubmit}
-                    onReset={handleReset}
-                    variant="inline"
-                />
-                <div className="p-4 border rounded-md mb-4">
-                    <h3 className="text-sm font-semibold mb-2">Current Filters:</h3>
-                    <pre className="text-xs bg-gray-100 p-2 rounded">{JSON.stringify(currentFilters, null, 2)}</pre>
-                </div>
-            </div>
-        );
-    },
+    render: ({ filters, initialValues }) => (
+        <InlineFiltersSectionWrapper filters={filters} initialValues={initialValues} />
+    ),
 };
