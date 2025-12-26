@@ -52,6 +52,12 @@ jobs:
                   else
                       echo "sudo not available, skipping system dependencies installation"
                   fi
+                  
+                  # Install required NSS libraries for Chromium
+                  if command -v apt-get &> /dev/null && command -v sudo &> /dev/null; then
+                      sudo apt-get update -qq || true
+                      sudo apt-get install -y -qq libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libasound2 || echo "Some packages may already be installed"
+                  fi
               continue-on-error: true
 
             - name: Install dependencies
